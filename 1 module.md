@@ -39,5 +39,3 @@ apt-get update && apt-get reinstall tzdata
 timedatectl set-timezone Asia/Yekaterinburg
 timedatectl
 ```
-
-```
