@@ -3,7 +3,7 @@
 - ISP
   
 ```tcl
-hostname ISP; exec bash
+hostname ISP
 mkdir -p /etc/net/ifaces/{ens20,ens21,ens22}
 cat > /etc/net/ifaces/ens20/options <<EOF
 BOOTPROTO=dhcp
