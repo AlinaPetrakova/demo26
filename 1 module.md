@@ -2,5 +2,5 @@
 ```tcl 
 hostnamectl set-hostname ISP 
 exec bash
-mkdir -p /etc/net/ifaces/ens20 /etc/net/ifaces/ens21 /etc/net/ifaces/ens22
+mkdir -p /etc/net/ifaces/{ens20,ens21,ens22}
 ```
