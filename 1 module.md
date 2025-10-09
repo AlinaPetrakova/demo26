@@ -245,7 +245,7 @@ systemctl restart network
 echo "nameserver 8.8.8.8" > /etc/resolv.conf
 useradd remote_user -u 2026
 echo "remote_user\:P@ssw0rd" | chpasswd
-echo "WHEEL_USERS ALL=(ALL\:ALL) NOPASSWD: ALL" >> /etc/sudoers
+sed -i 's/^#\s*\(%wheel\s*ALL=(ALL:ALL)\s*NOPASSWD:\s*ALL\)/\1/' /etc/sudoers
 gpasswd -a "remote_user" wheel
 cat > /etc/openssh/sshd_config <<EOF
 Port 2026
