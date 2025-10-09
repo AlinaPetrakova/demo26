@@ -246,7 +246,7 @@ echo "nameserver 8.8.8.8" > /etc/resolv.conf
 useradd remote_user -u 2026
 echo "remote_user\:P@ssw0rd" | chpasswd
 echo "WHEEL_USERS ALL=(ALL\:ALL) NOPASSWD: ALL" >> /etc/sudoers
-gpasswd -a remote_user wheel
+gpasswd -a "remote_user" wheel
 cat > /etc/openssh/sshd_config <<EOF
 Port 2026
 AllowUsers remote_user
