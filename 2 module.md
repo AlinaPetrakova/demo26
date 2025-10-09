@@ -1,7 +1,23 @@
 </details>
  <details>
-   <summary>2,3. RAID</summary>
-     
+   <summary>2,3,4. RAID + CHRONY</summary>
+
+- ISP
+
+ ```tcl
+apt-get install -y chrony
+cat > /etc/chrony.conf <<EOF
+server 127.0.0.1 iburst prefer
+hwtimestamp *
+local stratum 5
+allow 0/0
+EOF
+systemctl enable --now chronyd
+systemctl restart chronyd
+chronyc sources
+chronyc tracking | grep Stratum
+```
+
 - HQ-SRV
   
 ```tcl
@@ -43,6 +59,41 @@ mount -a
 mount -v
 touch /mnt/nfs/test
 ls /raid/nfs
+apt-get install -y chrony
+echo "server 172.16.1.1 iburst prefer" >> /etc/chrony.conf
+systemctl enable --now chronyd
+systemctl restart chronyd
+chronyc sources
+timedatectl
+```
+
+- HQ-RTR
+
+```tcl
+enable
+configure terminal
+ntp server 172.16.1.1
+clock timezone UTC 5
+exit
+show ntp status
+write memory
+```
+
+- BR-RTR
+
+```tcl
+enable
+configure terminal
+ntp server 172.16.2.1
+clock timezone UTC 5
+exit
+show ntp status
+write memory
+```
+
+- BR-SRV
+
+```tcl
 apt-get install -y chrony
 echo "server 172.16.1.1 iburst prefer" >> /etc/chrony.conf
 systemctl enable --now chronyd
