@@ -20,7 +20,6 @@ chronyc tracking | grep Stratum
 
 - HQ-SRV
 
-  
 ```tcl
 lsblk
 mdadm --create /dev/md0 --level=0 --raid-devices=2 /dev/sd[b-d]
@@ -44,8 +43,6 @@ apt-get install -y chrony
 echo "server 172.16.1.1 iburst prefer" >> /etc/chrony.conf
 systemctl enable --now chronyd
 systemctl restart chronyd
-```
-
 ```
 
 - HQ-CLI
@@ -78,8 +75,6 @@ iptables -t nat -A PREROUTING -p tcp -d 172.16.1.4 --dport 2026 -j DNAT --to-des
 iptables -t nat -A POSTROUTING -j MASQUERADE
 ```
 
-```
-
 - BR-RTR
 
 ```tcl
@@ -92,8 +87,6 @@ write memory
 iptables -t nat -A PREROUTING -p tcp -d 172.16.2.5 --dport 8080 -j DNAT --to-destination 192.168.3.10:8080
 iptables -t nat -A PREROUTING -p tcp -d 172.16.2.5 --dport 2026 -j DNAT --to-destination 192.168.3.10:2026
 iptables -t nat -A POSTROUTING -j MASQUERADE
-```
-
 ```
 
 - BR-SRV
