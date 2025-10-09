@@ -157,6 +157,7 @@ write
 - BR-RTR
 
 ```tcl
+enable
 conf t
 hostname br-rtr
 ip domain-name au-team.irpo
