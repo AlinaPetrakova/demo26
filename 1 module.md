@@ -84,15 +84,14 @@ exit
 interface int2
 connect port te1 service-instance te1/int2
 exit
+ip name-server 8.8.8.8
 ip route 0.0.0.0 0.0.0.0 172.16.1.1
 write
-conf t
 username net_admin
 password P@ssw0rd
 role admin
 exit
 write
-conf t
 interface int3
 description "999"
 ip address 192.168.99.1/29
@@ -107,7 +106,6 @@ interface int3
 connect port te1 service-instance te1/int3
 exit
 write
-conf t
 interface tunnel.0
 ip address 172.16.0.1/30
 ip mtu 1400
@@ -115,7 +113,6 @@ ip tunnel 172.16.1.4 172.16.2.5 mode gre
 ip ospf authentication-key ecorouter
 exit
 write
-conf t
 router ospf 1
 network 172.16.0.1/30 area 0
 network 192.168.1.0/27 area 0
@@ -135,11 +132,9 @@ interface int0
 ip nat outside
 exit
 write
-conf t
-ip nat pool NAT_POOL 192.168.1.1-192.168.1.254 192.168.2.1-192.168.2.254
+ip nat pool NAT_POOL 192.168.1.1-192.168.1.254,192.168.2.1-192.168.2.254
 ip nat source dynamic inside-to-outside pool NAT_POOL overload interface int0
 write
-conf t
 ip pool cli_pool 192.168.2.10-192.168.2.10
 dhcp-server 1
 pool cli_pool 1
@@ -153,7 +148,6 @@ interface int2
 dhcp-server 1
 exit
 write
-conf t
 ntp timezone utc+5
 exit
 show ntp timezone
@@ -167,7 +161,6 @@ conf t
 hostname br-rtr
 ip domain-name au-team.irpo
 write
-conf t
 interface int0
 description "to isp"
 ip address 172.16.2.5/28
@@ -192,16 +185,14 @@ interface int1
 connect port te1 service-instance te1/int1
 exit
 write
-conf t
+ip name-server 8.8.8.8
 ip route 0.0.0.0 0.0.0.0 172.16.2.1
 write
-conf t
 username net_admin
 password P@ssw0rd
 role admin
 exit
 write
-conf t
 interface tunnel.0
 ip address 172.16.0.2/30
 ip mtu 1400
@@ -209,7 +200,6 @@ ip tunnel 172.16.2.5 172.16.1.4 mode gre
 ip ospf authentication-key ecorouter
 exit
 write
-conf t
 router ospf 1
 network 172.16.0.2/30 area 0
 network 192.168.3.0/27 area 0
@@ -225,18 +215,14 @@ interface int0
 ip nat outside
 exit
 write
-conf t
 ip nat pool NAT_POOL 192.168.3.1-192.168.3.254
 ip nat source dynamic inside-to-outside pool NAT_POOL overload interface int0
 write
-conf t
 ip name-server 8.8.8.8
 write
-conf t
 ntp timezone utc+5
 exit
 write
-conf t
 show ntp timezone
 write
 ```
