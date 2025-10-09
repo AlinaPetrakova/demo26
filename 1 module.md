@@ -67,6 +67,7 @@ interface int2
 description "to hq-cli"
 ip address 192.168.2.1/28
 exit
+port te1
 service-instance te1/int2
 encapsulation dot1q 200
 rewrite pop 1
