@@ -1,4 +1,7 @@
-
+</details>
+ <details>
+   <summary>2,3. RAID<summary>
+     
 - HQ-SRV
   
 ```tcl
@@ -20,4 +23,30 @@ exportfs -a
 exportfs -v
 systemctl enable nfs
 systemctl restart nfs
+apt-get install -y chrony
+echo "server 172.16.1.1 iburst prefer" >> /etc/chrony.conf
+systemctl enable --now chronyd
+systemctl restart chronyd
+chronyc sources
+timedatectl
+```
+
+```
+
+- HQ-CLI
+
+```tcl
+apt-get update && apt-get install nfs-common -y
+mkdir -p /mnt/nfs
+echo "192.168.1.10:/raid/nfs /mnt/nfs nfs intr,soft,_netdev,x-systemd.automount 0 0" >> /etc/fstab
+mount -a
+mount -v
+touch /mnt/nfs/test
+ls /raid/nfs
+apt-get install -y chrony
+echo "server 172.16.1.1 iburst prefer" >> /etc/chrony.conf
+systemctl enable --now chronyd
+systemctl restart chronyd
+chronyc sources
+timedatectl
 ```
