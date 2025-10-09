@@ -1,6 +1,6 @@
 </details>
  <details>
-   <summary>2,3,4. RAID + CHRONY</summary>
+   <summary>2,3,4,8. RAID + CHRONY + Адресация портов</summary>
 
 - ISP
 
@@ -77,6 +77,11 @@ clock timezone UTC 5
 exit
 show ntp status
 write memory
+iptables -t nat -A PREROUTING -p tcp -d 172.16.1.4 --dport 8080 -j DNAT --to-destination 192.168.1.10:80
+iptables -t nat -A PREROUTING -p tcp -d 172.16.1.4 --dport 2026 -j DNAT --to-destination 192.168.1.10:2026
+iptables -t nat -A POSTROUTING -j MASQUERADE
+```
+
 ```
 
 - BR-RTR
@@ -89,6 +94,11 @@ clock timezone UTC 5
 exit
 show ntp status
 write memory
+iptables -t nat -A PREROUTING -p tcp -d 172.16.2.5 --dport 8080 -j DNAT --to-destination 192.168.3.10:8080
+iptables -t nat -A PREROUTING -p tcp -d 172.16.2.5 --dport 2026 -j DNAT --to-destination 192.168.3.10:2026
+iptables -t nat -A POSTROUTING -j MASQUERADE
+```
+
 ```
 
 - BR-SRV
