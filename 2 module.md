@@ -19,6 +19,7 @@ chronyc tracking | grep Stratum
 ```
 
 - HQ-SRV
+
   
 ```tcl
 lsblk
