@@ -130,7 +130,7 @@ dhcp-server 1
 exit
 exit
 write
-en conf t
+conf t
 ntp timezone utc+5
 ntp server 172.16.1.1
 ```
