@@ -243,7 +243,6 @@ echo 192.168.1.10/27 > /etc/net/ifaces/ens20/ipv4address
 echo "default via 192.168.1.1" > /etc/net/ifaces/ens20/ipv4route
 systemctl restart network
 echo "nameserver 8.8.8.8" > /etc/resolv.conf
-ping 8.8.8.8
 useradd remote_user -u 2026
 echo "remote_user\:P@ssw0rd" | chpasswd
 echo "WHEEL_USERS ALL=(ALL\:ALL) NOPASSWD: ALL" >> /etc/sudoers
