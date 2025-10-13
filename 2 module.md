@@ -67,8 +67,7 @@ systemctl restart chronyd
 enable
 configure terminal
 ntp server 172.16.1.1
-clock timezone UTC 5
-exit
+ntp timezone utc+5
 write memory
 iptables -t nat -A PREROUTING -p tcp -d 172.16.1.4 --dport 8080 -j DNAT --to-destination 192.168.1.10:80
 iptables -t nat -A PREROUTING -p tcp -d 172.16.1.4 --dport 2026 -j DNAT --to-destination 192.168.1.10:2026
