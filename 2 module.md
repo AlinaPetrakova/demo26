@@ -1,22 +1,6 @@
 </details>
  <details>
-   <summary>2,3,4,8. RAID + CHRONY + Адресация портов</summary>
-
-- ISP
-
- ```tcl
-apt-get install -y chrony
-cat > /etc/chrony.conf <<EOF
-server 127.0.0.1 iburst prefer
-hwtimestamp *
-local stratum 5
-allow 0/0
-EOF
-systemctl enable --now chronyd
-systemctl restart chronyd
-chronyc sources
-chronyc tracking | grep Stratum
-```
+   <summary>2,3 Конфигурация файлового хранилища на сервере HQ-SRV</summary>
 
 - HQ-SRV
 
@@ -39,10 +23,6 @@ exportfs -a
 exportfs -v
 systemctl enable nfs
 systemctl restart nfs
-apt-get install -y chrony
-echo "server 172.16.1.1 iburst prefer" >> /etc/chrony.conf
-systemctl enable --now chronyd
-systemctl restart chronyd
 ```
 
 - HQ-CLI
@@ -55,6 +35,40 @@ mount -a
 mount -v
 touch /mnt/nfs/test
 ls /raid/nfs
+```
+
+</details>
+ <details>
+   <summary>4. Настройка службы сетевого времени на базе сервиса chrony</summary>
+
+- ISP
+
+ ```tcl
+apt-get install -y chrony
+cat > /etc/chrony.conf <<EOF
+server 127.0.0.1 iburst prefer
+hwtimestamp *
+local stratum 5
+allow 0/0
+EOF
+systemctl enable --now chronyd
+systemctl restart chronyd
+chronyc sources
+chronyc tracking | grep Stratum
+```
+
+- HQ-SRV
+
+```tcl
+apt-get install -y chrony
+echo "server 172.16.1.1 iburst prefer" >> /etc/chrony.conf
+systemctl enable --now chronyd
+systemctl restart chronyd
+```
+
+- HQ-CLI
+
+```tcl
 apt-get install -y chrony
 echo "server 172.16.1.1 iburst prefer" >> /etc/chrony.conf
 systemctl enable --now chronyd
@@ -94,4 +108,24 @@ apt-get update && apt-get install chrony -y
 echo "server 172.16.1.1 iburst prefer" >> /etc/chrony.conf
 systemctl enable --now chronyd
 systemctl restart chronyd
+```
+
+</details>
+ <details>
+   <summary>4. Настройка службы сетевого времени на базе сервиса chrony</summary>
+
+- HQ-RTR
+
+```tcl
+ip nat source static tcp 172.16.1.4 8080 192.168.1.10 80
+ip nat source static tcp 172.16.1.4 2026 192.168.1.10 2026
+write
+```
+
+- BR-RTR
+
+```tcl
+ip nat source static tcp 172.16.2.5 8080 192.168.3.10 8080
+ip nat source static tcp 172.16.2.5 2026 192.168.3.10 2026
+write
 ```
