@@ -90,7 +90,7 @@ write
 - BR-SRV
 
 ```tcl
-apt-get install -y chrony
+apt-get update && apt-get install chrony -y
 echo "server 172.16.1.1 iburst prefer" >> /etc/chrony.conf
 systemctl enable --now chronyd
 systemctl restart chronyd
