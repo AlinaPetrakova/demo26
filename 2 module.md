@@ -69,9 +69,8 @@ configure terminal
 ntp server 172.16.1.1
 ntp timezone utc+5
 write memory
-iptables -t nat -A PREROUTING -p tcp -d 172.16.1.4 --dport 8080 -j DNAT --to-destination 192.168.1.10:80
-iptables -t nat -A PREROUTING -p tcp -d 172.16.1.4 --dport 2026 -j DNAT --to-destination 192.168.1.10:2026
-iptables -t nat -A POSTROUTING -j MASQUERADE
+ip nat source static tcp 172.16.1.4 8080 192.168.1.10 80
+ip nat source static tcp 172.16.1.4 2026 192.168.1.10 2026
 ```
 
 - BR-RTR
@@ -80,12 +79,10 @@ iptables -t nat -A POSTROUTING -j MASQUERADE
 enable
 configure terminal
 ntp server 172.16.2.1
-clock timezone UTC 5
-exit
+ntp timezone utc+5
 write memory
-iptables -t nat -A PREROUTING -p tcp -d 172.16.2.5 --dport 8080 -j DNAT --to-destination 192.168.3.10:8080
-iptables -t nat -A PREROUTING -p tcp -d 172.16.2.5 --dport 2026 -j DNAT --to-destination 192.168.3.10:2026
-iptables -t nat -A POSTROUTING -j MASQUERADE
+ip nat source static tcp 172.16.2.5 8080 192.168.3.10 8080
+ip nat source static tcp 172.16.2.5 2026 192.168.3.10 2026
 ```
 
 - BR-SRV
