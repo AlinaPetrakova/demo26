@@ -111,7 +111,7 @@ systemctl restart chronyd
 
 </details>
  <details>
-   <summary>4. Настройка службы сетевого времени на базе сервиса chrony</summary>
+   <summary>8. Настройка службы сетевого времени на базе сервиса chrony</summary>
 
 - HQ-RTR
 
