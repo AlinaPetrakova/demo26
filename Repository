@@ -1,5 +1,5 @@
 ## 1 этап.
-
+<details>
 - ISP
 
 ```tcl
@@ -11,6 +11,7 @@ rpm [p11] http://192.168.0.91/mirror p11/branch/noarch classic
 rpm [p11] http://192.168.0.91/mirror p11/branch/x86_64-i586 classic
 EOF
 ```
+</details>
 
 - CLI & SRV'S
 
