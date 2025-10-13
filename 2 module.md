@@ -71,6 +71,7 @@ ntp timezone utc+5
 write memory
 ip nat source static tcp 172.16.1.4 8080 192.168.1.10 80
 ip nat source static tcp 172.16.1.4 2026 192.168.1.10 2026
+write
 ```
 
 - BR-RTR
@@ -83,6 +84,7 @@ ntp timezone utc+5
 write memory
 ip nat source static tcp 172.16.2.5 8080 192.168.3.10 8080
 ip nat source static tcp 172.16.2.5 2026 192.168.3.10 2026
+write
 ```
 
 - BR-SRV
