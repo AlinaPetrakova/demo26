@@ -34,7 +34,6 @@ echo "192.168.1.10:/raid/nfs /mnt/nfs nfs intr,soft,_netdev,x-systemd.automount 
 mount -a
 mount -v
 touch /mnt/nfs/test
-ls /raid/nfs
 ```
 
 </details>
