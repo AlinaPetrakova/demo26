@@ -380,3 +380,90 @@ ip nat source static tcp 172.16.2.5 8080 192.168.3.10 8080
 ip nat source static tcp 172.16.2.5 2026 192.168.3.10 2026
 write
 ```
+
+</details>
+ <details>
+   <summary>9. Настройка веб-сервера nginx как обратный прокси-сервер на ISP</summary>
+
+- ISP
+
+ ``tcl
+apt-get install nginx -y
+mkdir -p /etc/nginx/sites-available.d
+cat > /etc/nginx/sites-available.d/proxy.conf <<EOF
+server {
+    listen 80;
+    server_name web.au-team.irpo;
+
+    location / {
+        proxy_pass http://172.16.1.4:8080;
+        proxy_set_header Host \\$host;
+        proxy_set_header X-Real-IP \\$remote_addr;
+    }
+}
+server {
+    listen 80;
+    server_name docker.au-team.irpo;
+
+    location / {
+        proxy_pass http://172.16.2.5:8080;
+        proxy_set_header Host \\$host;
+        proxy_set_header X-Real-IP \\$remote_addr;
+    }
+}
+EOF
+mkdir -p /etc/nginx/sites-enabled.d
+ln -s /etc/nginx/sites-available.d/proxy.conf /etc/nginx/sites-enabled.d/
+mv /etc/nginx/sites-available.d/default.conf /root/ 2>/dev/null
+systemctl restart nginx
+```
+
+</details>
+ <details>
+   <summary>10. Настройка на маршрутизаторе ISP  web-based аутентификации</summary>
+
+- ISP
+
+```tcl
+apt-get install apache2-utils -y
+htpasswd -bc /etc/nginx/.htpasswd WEB P@ssw0rd
+cat > /etc/nginx/sites-available/proxy.conf <<EOF
+server {
+    listen 80;
+    server_name docker.au-team.irpo;
+    location / {
+        proxy_pass http://172.16.2.5:8080;
+        proxy_set_header Host \\$host;
+        proxy_set_header X-Real-IP \\$remote_addr;
+    }
+}
+server {
+    listen 80;
+    server_name web.au-team.irpo;
+    auth_basic "Restricted Access";
+    auth_basic_user_file /etc/nginx/.htpasswd;
+    location / {
+        proxy_pass http://172.16.1.4:8080;
+        proxy_set_header Host \\$host;
+        proxy_set_header X-Real-IP \\$remote_addr;
+    }
+}
+EOF
+ln -s /etc/nginx/sites-available/proxy.conf /etc/nginx/sites-enabled/
+systemctl restart nginx
+```
+
+- HQ-CLI
+
+```tcl
+systemctl restart network
+```
+
+</details>
+ <details>
+   <summary>10. Установка Яндекс браузера на HQ-CLI</summary>
+
+```tcl
+apt-get install yandex-browser-stable -y
+yandex-browser
+```
