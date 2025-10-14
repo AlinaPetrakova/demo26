@@ -363,7 +363,7 @@ systemctl restart network
 
 </details>
  <details>
-   <summary>8. Настройка службы сетевого времени на базе сервиса chrony</summary>
+   <summary>8. Конфигурация статической трансляции портов</summary>
 
 - HQ-RTR
 
@@ -461,7 +461,7 @@ systemctl restart network
 
 </details>
  <details>
-   <summary>10. Установка Яндекс браузера на HQ-CLI</summary>
+   <summary>11. Установка Яндекс браузера на HQ-CLI</summary>
 
 ```tcl
 apt-get install yandex-browser-stable -y
