@@ -31,14 +31,14 @@ timedatectl set-timezone Asia/Yekaterinburg
 - HQ-RTR
 
 ```tcl
-enable
+en
 conf t
 hostname hq-rtr
 ip domain-name au-team.irpo
-write memory
 interface int0
 description "to isp"
 ip address 172.16.1.4/28
+ip nat outside
 exit
 port te0
 service-instance te0/int0
@@ -47,36 +47,40 @@ exit
 exit
 interface int0
 connect port te0 service-instance te0/int0
-ip nat outside
 exit
 interface int1
 description "to hq-srv"
 ip address 192.168.1.1/27
-exit
-port te1
-service-instance te1/int1
-encapsulation dot1q 100
-rewrite pop 1
-ex
-ex
-interface int1
-connect port te1 service-instance te1/int1
 ip nat inside
 exit
 interface int2
 description "to hq-cli"
 ip address 192.168.2.1/28
+ip nat inside
 exit
 port te1
+service-instance te1/int1
+encapsulation dot1q 100
+rewrite pop 1
+exit
 service-instance te1/int2
 encapsulation dot1q 200
 rewrite pop 1
 exit
 exit
+interface int1
+connect port te1 service-instance te1/int1
+exit
 interface int2
 connect port te1 service-instance te1/int2
-ip nat inside
 exit
+ip route 0.0.0.0 0.0.0.0 172.16.1.1
+write
+username net_admin
+password P@ssw0rd
+role admin
+exit
+write
 interface int3
 description "999"
 ip address 192.168.99.1/29
@@ -89,14 +93,6 @@ exit
 exit
 interface int3
 connect port te1 service-instance te1/int3
-exit
-ip name-server 8.8.8.8
-ip route 0.0.0.0 0.0.0.0 172.16.1.1
-write
-username net_admin
-password P@ssw0rd
-role admin
-exit
 write
 interface tunnel.0
 ip address 172.16.0.1/30
@@ -114,6 +110,7 @@ no passive-interface tunnel.0
 area 0 authentication
 exit
 write
+ip name-server 8.8.8.8
 ip nat pool NAT_POOL 192.168.1.1-192.168.1.254,192.168.2.1-192.168.2.254
 ip nat source dynamic inside-to-outside pool NAT_POOL overload interface int0
 write
@@ -130,22 +127,24 @@ dhcp-server 1
 exit
 exit
 write
+en
 conf t
 ntp timezone utc+5
 ntp server 172.16.1.1
+write
 ```
 
 - BR-RTR
 
 ```tcl
-enable
+en
 conf t
 hostname br-rtr
 ip domain-name au-team.irpo
-write
 interface int0
 description "to isp"
 ip address 172.16.2.5/28
+ip nat outside
 exit
 port te0
 service-instance te0/int0
@@ -154,23 +153,20 @@ exit
 exit
 interface int0
 connect port te0 service-instance te0/int0
-ip nat outside
 exit
 interface int1
 description "to br-srv"
 ip address 192.168.3.1/28
+ip nat inside
 exit
 port te1
 service-instance te1/int1
 encapsulation untagged
-ex
-ex
+exit
+exit
 interface int1
 connect port te1 service-instance te1/int1
-ip nat inside
 exit
-write
-ip name-server 8.8.8.8
 ip route 0.0.0.0 0.0.0.0 172.16.2.1
 write
 username net_admin
@@ -193,6 +189,7 @@ no passive-interface tunnel.0
 area 0 authentication
 exit
 write
+ip name-server 8.8.8.8
 ip nat pool NAT_POOL 192.168.3.1-192.168.3.254
 ip nat source dynamic inside-to-outside pool NAT_POOL overload interface int0
 write
@@ -279,7 +276,7 @@ Banner /etc/openssh/banner
 EOF
 echo "Authorized access only" > /etc/openssh/banner
 systemctl restart sshd
-echo "nameserver 8.8.8.8" > /etc/resolv.conf
+echo nameserver 192.168.1.10 > /etc/resolv.conf
 timedatectl set-timezone Asia/Yekaterinburg
 ```
 
@@ -287,14 +284,25 @@ timedatectl set-timezone Asia/Yekaterinburg
 
 ```tcl
 hostnamectl set-hostname hq-cli.au-team.irpo
+exec bash
 mkdir -p /etc/net/ifaces/ens20
 cat > /etc/net/ifaces/ens20/options <<EOF
-DISABLED=no
 TYPE=eth
-BOOTPROTO=dhcp
+BOOTPROTO=static
+DISABLED=no
 CONFIG_IPV4=yes
 EOF
+echo "192.168.2.10/28" > /etc/net/ifaces/ens20/ipv4address
+echo "default via 192.168.2.1" > /etc/net/ifaces/ens20/ipv4route
+systemctl restart network
 echo "nameserver 8.8.8.8" > /etc/resolv.conf
+rm -rf /etc/net/ifaces/ens20/ipv4address /etc/net/ifaces/ens20/ipv4route
+cat > /etc/net/ifaces/ens20/options <<EOF
+TYPE=eth
+BOOTPROTO=dhcp
+DISABLED=no
+CONFIG_IPV4=yes
+EOF
 systemctl restart network
 timedatectl set-timezone Asia/Yekaterinburg
 ```
