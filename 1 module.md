@@ -202,41 +202,33 @@ write
 
 ```tcl
 hostnamectl set-hostname hq-srv.au-team.irpo
-mkdir -p /etc/net/ifaces/ens20
-cat > /etc/net/ifaces/ens20/options <<EOF
-TYPE=eth
-BOOTPROTO=static
-DISABLED=no
-CONFIG_IPV4=yes
-EOF
-echo "192.168.1.10/27" > /etc/net/ifaces/ens20/ipv4address
-echo "default via 192.168.1.1" > /etc/net/ifaces/ens20/ipv4route
+mkdir /etc/net/ifaces/ens20
+echo -e "BOOTPROTO=static\nCONFIG_IPV4=yes\nDISABLED=no\nTYPE=eth" > /etc/net/ifaces/ens20/options
+echo 192.168.1.10/27 > /etc/net/ifaces/ens20/ipv4address
+echo default via 192.168.1.1 > /etc/net/ifaces/ens20/ipv4route
+echo nameserver 8.8.8.8 > /etc/resolv.conf
 systemctl restart network
+ip -c a
 useradd sshuser -u 2026
 echo "sshuser:P@ssw0rd" | chpasswd
-sed -i 's/^#\s*\(%wheel\s*ALL=(ALL:ALL)\s*NOPASSWD:\s*ALL\)/\1/' /etc/sudoers
+sed -i 's/# WHEEL_USERS ALL=(ALL:ALL) NOPASSWD: ALL/WHEEL_USERS ALL=(ALL:ALL) NOPASSWD: ALL/g' /etc/sudoers
 gpasswd -a "sshuser" wheel
-cat > /etc/openssh/sshd_config <<EOF
-Port 2026
-AllowUsers sshuser
-MaxAuthTries 2
-PasswordAuthentication yes
-Banner /etc/openssh/banner
-EOF
-echo "Authorized access only" > /etc/openssh/banner
-systemctl restart sshd
-echo "nameserver 8.8.8.8" > /etc/resolv.conf
-apt-get update && apt-get install dnsmasq -y
+sed -i 's/#Port 22/Port 2026\nAllowUsers sshuser\nMaxAuthTries 2\nPasswordAuthentication yes\nBanner \/etc\/openssh\/banner/' /etc/openssh/sshd_config
+echo Authorized access only > /etc/openssh/banner
+systemctl enable --now sshd
+apt-get update && apt-get install chrony dnsmasq -y
+timedatectl set-timezone Asia/Yekaterinburg
 systemctl enable --now dnsmasq
-cat > /etc/dnsmasq.conf <<EOF
+cat << EOF >> /etc/dnsmasq.conf
 no-resolv
 domain=au-team.irpo
 server=8.8.8.8
 interface=*
 address=/hq-rtr.au-team.irpo/192.168.1.1
+server=/au-team.irpo/192.168.3.10
 ptr-record=1.1.168.192.in-addr.arpa,hq-rtr.au-team.irpo
-address=/docker.au-team.irpo/192.168.1.1
-address=/web.au-team.irpo/192.168.2.1
+address=/web.au-team.irpo/172.16.1.1
+address=/docker.au-team.irpo/172.16.2.1
 address=/br-rtr.au-team.irpo/192.168.3.1
 address=/hq-srv.au-team.irpo/192.168.1.10
 ptr-record=10.1.168.192.in-addr.arpa,hq-srv.au-team.irpo
@@ -244,9 +236,10 @@ address=/hq-cli.au-team.irpo/192.168.2.10
 ptr-record=10.2.168.192.in-addr.arpa,hq-cli.au-team.irpo
 address=/br-srv.au-team.irpo/192.168.3.10
 EOF
-echo "192.168.1.1 hq-rtr.au-team.irpo" >> /etc/hosts
+echo -e "192.168.1.1  hq-rtr.au-team.irpo" >> /etc/hosts
 systemctl restart dnsmasq
-timedatectl set-timezone Asia/Yekaterinburg
+systemctl restart sshd
+exec bash
 ```
 
 - BR-SRV
